@@ -1,0 +1,28 @@
+{
+  "name": "load-asyncfy",
+  "version": "0.0.1",
+  "description": "Promise to load JavaScript or CSS files asynchrounous in CommonJS environment, for example used as a run-time loader with build tool browserify.",
+  "main": "src/load-asyncfy.js",
+  "directories": {
+    "test": "test",
+    "src": "src"
+  },
+  "scripts": {
+    "test": "grunt test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:kerryChen95/load-asyncfy.git"
+  },
+  "keywords": [
+    "promise",
+    "loader",
+    "browserify"
+  ],
+  "author": "kerryChen95",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/kerryChen95/load-asyncfy/issues"
+  },
+  "homepage": "https://github.com/kerryChen95/load-asyncfy"
+}

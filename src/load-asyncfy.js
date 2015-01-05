@@ -1,6 +1,7 @@
 var Q = require('q')
 
-var doc = document
+var win = window
+var doc = win.document
 // head element
 var headEl = doc.head || doc.getElementsByTagName('head')[0] || doc.documentElement
 var noop = function () {}
@@ -19,19 +20,28 @@ var isOldWebKit = +navigator.userAgent
     .replace(/.*(?:AppleWebKit|AndroidWebKit)\/(\d+).*/, "$1") < 536
 
 /**
- * @param {string} url URL of JavaScript or CSS file to load.
+ * Promise to load a JavaScript or CSS file.
+ * @param {string} url URL of JavaScript or CSS file to load. If relative
+ *        URL, it's relative to document's URL. If it's JavaScript file,
+ *        no need to end with `.js`.
  * @param {Object} [options] Optional configs.
  * @param {string} [options.charset] The character encoding of the file
  *        content.
- * @param {string} [options.crossorigin] Only `anonymous` and `use-credentials`
- *        are valid. Ref:
+ * @param {string=undefined} [options.crossorigin] Only `anonymous` and
+ *        `use-credentials` are valid.
+ *        Ref:
  *        https://github.com/seajs/seajs/issues/972
  * @param {Node=head} [options.container] The DOM node used as container of
  *        the element to be inserted. For example, useful when you wanna
  *        insert CSS files into an iframe.
+ * @param {string=''|array=[]} [options.fulfilledWith] Global variable name(s)
+ *        which promise will be fulfilled with. Only make sense when load
+ *        JavaScript file.
+ * @return {object} A promise to load the JavaScript or CSS file.
  */
 module.exports = function loadAsyncfy (url, options) {
   var deferred = Q.defer()
+  options = options || {}
 
   // Use `call` to be compatible with the case that a key named `hasOwnProperty` is added
   // TODO:
@@ -41,7 +51,7 @@ module.exports = function loadAsyncfy (url, options) {
   if (hasOwnProperty.call(passedUrls, url)) {
     // Resolve the promise after return it
     setTimeout(function () {
-      deferred.resolve()
+      deferred.resolve(getGlobalVars(options.fulfilledWith))
     }, 1)
     return deferred.promise
   }
@@ -49,22 +59,22 @@ module.exports = function loadAsyncfy (url, options) {
     passedUrls[url] = true
   }
 
-  // To support cross-origin, dynamicly create `link` or `script` tag to load
-  // CSS or JavaScript file, and use `load` event to detect loaded.
+  // To load files from cross-origin, dynamicly create `link` or `script` tag
+  // to load CSS or JavaScript file respectively.
   // Ref:
   // https://github.com/jquery/jquery/blob/2.1.3/dist/jquery.js#L8679
   var isCss = IS_CSS_RE.test(url)
   var node = doc.createElement(isCss ? 'link' : 'script')
 
-  addAttr(node, options)
-  addOnload(node, deferred)
-  node.src = url
-  (options.container || headEl).appendChild(node)
+  addAttr(node, isCss, options)
+  addOnload(node, isCss, deferred, options)
+  isCss ? (node.href = url) : (node.src = url = url + '.js')
+  ;(options.container || headEl).appendChild(node)
 
   return deferred.promise
 }
 
-function addAttr (node, options) {
+function addAttr (node, isCss, options) {
   if (options.charset) {
     node.charset = options.charset
   }
@@ -75,16 +85,19 @@ function addAttr (node, options) {
       node.crossorigin = options.crossorigin
       break
   }
+  if (isCss) {
+    node.rel = 'stylesheet'
+  }
 }
 
-function addOnload (isCss, node, deferred) {
+function addOnload (node, isCss, deferred, options) {
   var supportOnload = 'onload' in node
 
   // for Old WebKit and Old Firefox
   if (isCss && (isOldWebKit || !supportOnload)) {
     // Start poll CSS file after inserting into DOM
     setTimeout(function () {
-      pollCss(node, deferred)
+      pollCss(node, deferred, options)
     }, 1)
     return
   }
@@ -107,14 +120,14 @@ function addOnload (isCss, node, deferred) {
     node.onload = node.onerror = node.onreadystatechange = null
 
     node = null
-    deferred.resolve()
+    deferred.resolve(getGlobalVars(options.fulfilledWith))
   }
-  function onerror () {
-    deferred.reject()
+  function onerror (errorEvent) {
+    deferred.reject(errorEvent)
   }
 }
 
-function pollCss (node, deferred) {
+function pollCss (node, deferred, options) {
   var sheet = node.sheet
   var isLoaded
 
@@ -141,15 +154,12 @@ function pollCss (node, deferred) {
     }
   }
 
-  setTimeout(function () {
-    if (isLoaded) {
-      // Delay resolve promise to give time to render style
-      deferred.resolve()
-    }
-    else {
-      deferred.reject()
-    }
-  }, 20)
+  if (isLoaded) {
+    deferred.resolve(getGlobalVars(options.fulfilledWith))
+  }
+  else {
+    deferred.reject()
+  }
 }
 
 // Delay resolving promise,
@@ -171,4 +181,23 @@ function delayResolve (deferred) {
       originReject.apply(deferred, args)
     }, 20)
   }
+}
+
+function getGlobalVars (name) {
+  if (!name) {
+    return
+  }
+  else if (typeof name === 'string') {
+    return win[name]
+  }
+
+  var globalVars = []
+  var names = name
+  name = null
+  var l = names.length
+  var i
+  for (i = 0; i < l; ++i) {
+    globalVars.push(win[names[i]])
+  }
+  return globalVars
 }

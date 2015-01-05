@@ -1,1 +1,7 @@
 .DS_Store
+node_modules
+/dist/
+# This file is copied from `node_modules` directory into `src/test/`,
+# due to that browserify cannot require CSS files whose absolute path
+# contains sub-string `node_modules`
+/src/test/jasmine.css

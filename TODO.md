@@ -14,7 +14,7 @@
 * [x] Not load the CSS file again which has been required to load
 * [x] Support `options.container`
 * [x] Support `options.fulfilledWith`
-* [ ] Rename module name `load-asyncfy` to `promise-require`
+* [x] Rename module name `load-asyncfy` to `promise-require`
 
 ### Critical
 

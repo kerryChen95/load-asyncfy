@@ -6,7 +6,7 @@ var doc = win.document
 var headEl = doc.head || doc.getElementsByTagName('head')[0] || doc.documentElement
 var noop = function () {}
 var hasOwnProperty = ({}).hasOwnProperty
-// The URLs passed into `loadAsyncfy`
+// The URLs passed into `promiseRequire`
 var passedUrls = {}
 
 var IS_CSS_RE = /\.css(?:\?|$)/i
@@ -39,7 +39,7 @@ var isOldWebKit = +navigator.userAgent
  *        JavaScript file.
  * @return {object} A promise to load the JavaScript or CSS file.
  */
-module.exports = function loadAsyncfy (url, options) {
+module.exports = function promiseRequire (url, options) {
   var deferred = Q.defer()
   options = options || {}
 

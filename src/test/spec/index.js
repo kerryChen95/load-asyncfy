@@ -7,17 +7,17 @@ require('jasmine-core/lib/jasmine-core/jasmine-html')
 require('jasmine-core/lib/jasmine-core/boot')
 require('../jasmine.css')
 
-var loadAsyncfy = require('../../load-asyncfy')
+var promiseRequire = require('../../promise-require')
 var Q = require('q')
 
-describe('load-asyncfy module: ', function () {
+describe('promise-require module: ', function () {
   it('exports a function', function () {
-    expect(typeof loadAsyncfy).toBe('function')
+    expect(typeof promiseRequire).toBe('function')
   })
 
   describe('promises to load a JS file: ', function () {
     it('fulfill when loaded', function (done) {
-      loadAsyncfy('asset/a')
+      promiseRequire('asset/a')
       .then(function () {
         console.log('The promise to load a.js was resolved')
         expect(typeof globalA).toBe('boolean')
@@ -27,7 +27,7 @@ describe('load-asyncfy module: ', function () {
     })
 
     it('fulfill with the specified global variable', function (done) {
-      loadAsyncfy('asset/b', {
+      promiseRequire('asset/b', {
         fulfilledWith: 'globalB'
       })
       .then(function () {
@@ -39,7 +39,7 @@ describe('load-asyncfy module: ', function () {
     })
 
     it('fulfill with multiple specified global variables', function (done) {
-      loadAsyncfy('asset/multiple-global-vars', {
+      promiseRequire('asset/multiple-global-vars', {
         fulfilledWith: ['globalVar1', 'globalVar2', 'globalVar3']
       })
       .then(function (globalVars) {
@@ -52,7 +52,7 @@ describe('load-asyncfy module: ', function () {
     })
 
     it('reject with an error event object if not exist', function (done) {
-      loadAsyncfy('asset/nonexistent')
+      promiseRequire('asset/nonexistent')
       .then(function () {
         expect('onFulfiled callback ').toBe('not invoked')
         done()
@@ -66,12 +66,12 @@ describe('load-asyncfy module: ', function () {
     })
 
     it('not load the JS file again which has beed required to load', function (done) {
-      loadAsyncfy('asset/require-multiple-times', {
+      promiseRequire('asset/require-multiple-times', {
         fulfilledWith: 'requireMultipletimes'
       })
       .then(function (requireMultipletimes) {
         expect(requireMultipletimes).toBe(1)
-        return loadAsyncfy('asset/require-multiple-times', {
+        return promiseRequire('asset/require-multiple-times', {
           fulfilledWith: 'requireMultipletimes'
         })
       })
@@ -84,7 +84,7 @@ describe('load-asyncfy module: ', function () {
     it('support set custom container of script element', function (done) {
       var optionsContainer = document.getElementById('container')
       // URL is relative container's document
-      loadAsyncfy('in-container', {
+      promiseRequire('in-container', {
         container: optionsContainer.contentDocument.head
       })
       .then(function () {
@@ -96,7 +96,7 @@ describe('load-asyncfy module: ', function () {
 
   describe('promises to load a CSS file: ', function (done) {
     it('fulfill when loaded', function (done) {
-      loadAsyncfy('asset/x.css')
+      promiseRequire('asset/x.css')
       .then(function () {
         expect(getComputedStyle(document.getElementById('x')).display).toBe('none')
         done()
@@ -104,7 +104,7 @@ describe('load-asyncfy module: ', function () {
     })
 
     it('reject with an error event object if not exist', function (done) {
-      loadAsyncfy('asset/nonexistent.css')
+      promiseRequire('asset/nonexistent.css')
       .then(function () {
         expect('onFulfiled callback ').toBe('not invoked')
         done()
@@ -119,11 +119,11 @@ describe('load-asyncfy module: ', function () {
 
     it('not load the CSS file again which has been required to load', function (done) {
       var requireMultipleTimes = document.getElementById('require-multiple-times')
-      loadAsyncfy('asset/require-multiple-times.css')
+      promiseRequire('asset/require-multiple-times.css')
       .then(function () {
         expect(getComputedStyle(requireMultipleTimes).display).toBe('none')
         requireMultipleTimes.style.display = 'block'
-        return loadAsyncfy('asset/require-multiple-times.css')
+        return promiseRequire('asset/require-multiple-times.css')
       })
       .then(function () {
         expect(getComputedStyle(requireMultipleTimes).display).toBe('block')
@@ -134,7 +134,7 @@ describe('load-asyncfy module: ', function () {
     it('support set custom container of link element', function (done) {
       var optionsContainer = document.getElementById('container')
       // URL is relative container's document
-      loadAsyncfy('in-container.css', {
+      promiseRequire('in-container.css', {
         container: optionsContainer.contentDocument.head
       })
       .then(function () {

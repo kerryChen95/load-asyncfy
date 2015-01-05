@@ -1,6 +1,6 @@
 {
   "name": "load-asyncfy",
-  "version": "0.0.1",
+  "version": "0.0.6",
   "description": "Promise to load JavaScript or CSS files asynchrounous in CommonJS environment, for example used as a run-time loader with build tool browserify.",
   "main": "src/load-asyncfy.js",
   "directories": {

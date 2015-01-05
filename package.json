@@ -1,10 +1,10 @@
 {
-  "version": "0.0.6",
-  "description": "Promise to load JavaScript or CSS files asynchrounous in CommonJS environment, for example used as a run-time loader with build tool browserify.",
   "name": "promise-require",
+  "version": "0.0.7",
+  "description": "Promise to require JS/CSS in CommonJS environment, for example used as run-time loader with build tool Browserify",
   "main": "src/promise-require.js",
   "directories": {
-    "test": "test",
+    "dist": "dist",
     "src": "src"
   },
   "scripts": {
@@ -16,8 +16,11 @@
   },
   "keywords": [
     "promise",
+    "require",
+    "run-time",
     "loader",
-    "browserify"
+    "browserify",
+    "CommonJS"
   ],
   "author": "kerryChen95",
   "license": "MIT",

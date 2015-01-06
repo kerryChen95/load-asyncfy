@@ -41,9 +41,8 @@
 
 ### Blocker
 
-* [ ] `options.fulfilledWith` can be provided as function which return module's `exports` object
 * [ ] Check and save absolute URL
-* [ ] Support `options.waitGlobalVars`: if `ture`, will not resolve until specified global variables all have values.
+* [ ] Support `options.timeout=15000ms`
 * [ ] Test poll CSS file
 
 ### Critical
@@ -53,7 +52,6 @@
 ## V0.3
 
 * [ ] Support `options.checkLoaded(node, done)`: custom check whether loaded and call `done()` if loaded
-* [ ] Support `options.timeout=15000ms`
 
 ## V0.4
 

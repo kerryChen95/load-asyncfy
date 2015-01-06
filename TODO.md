@@ -18,6 +18,7 @@
 
 ### Critical
 
+* [x] Must have extension name `.js` for JS files
 * [ ] Promise to load multiple JavaScript files
 * [ ] Test browsers
   * [ ] IE8+

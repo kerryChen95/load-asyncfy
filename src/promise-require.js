@@ -22,8 +22,8 @@ var isOldWebKit = +navigator.userAgent
 /**
  * Promise to load a JavaScript or CSS file.
  * @param {string} url URL of JavaScript or CSS file to load. If relative
- *        URL, it's relative to document's URL. If it's JavaScript file,
- *        no need to end with `.js`.
+ *        URL, it's relative to document's URL. If it's CSS file, must have
+ *        extension `.css`
  * @param {Object} [options] Optional configs.
  * @param {string} [options.charset] The character encoding of the file
  *        content.
@@ -65,8 +65,14 @@ module.exports = function promiseRequire (url, options) {
 
   addAttr(node, isCss, options)
   addOnload(node, isCss, deferred, options)
-  isCss ? (node.href = url) : (node.src = url = url + '.js')
-  ;(options.container || headEl).appendChild(node)
+  isCss ? (node.href = url) : (node.src = url)
+  try {
+    ;(options.container || headEl).appendChild(node)
+  }
+  catch (error) {
+    deferred.reject(error)
+    return deferred.promise
+  }
 
   return deferred.promise
 }

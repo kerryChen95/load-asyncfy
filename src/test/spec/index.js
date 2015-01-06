@@ -17,7 +17,7 @@ describe('promise-require module: ', function () {
 
   describe('promises to load a JS file: ', function () {
     it('fulfill when loaded', function (done) {
-      promiseRequire('asset/a')
+      promiseRequire('asset/a.js')
       .then(function () {
         console.log('The promise to load a.js was resolved')
         expect(typeof globalA).toBe('boolean')
@@ -27,7 +27,7 @@ describe('promise-require module: ', function () {
     })
 
     it('fulfill with the specified global variable', function (done) {
-      promiseRequire('asset/b', {
+      promiseRequire('asset/b.js', {
         fulfilledWith: 'globalB'
       })
       .then(function () {
@@ -39,7 +39,7 @@ describe('promise-require module: ', function () {
     })
 
     it('fulfill with multiple specified global variables', function (done) {
-      promiseRequire('asset/multiple-global-vars', {
+      promiseRequire('asset/multiple-global-vars.js', {
         fulfilledWith: ['globalVar1', 'globalVar2', 'globalVar3']
       })
       .then(function (globalVars) {
@@ -52,7 +52,7 @@ describe('promise-require module: ', function () {
     })
 
     it('reject with an error event object if not exist', function (done) {
-      promiseRequire('asset/nonexistent')
+      promiseRequire('asset/nonexistent.js')
       .then(function () {
         expect('onFulfiled callback ').toBe('not invoked')
         done()
@@ -66,12 +66,12 @@ describe('promise-require module: ', function () {
     })
 
     it('not load the JS file again which has beed required to load', function (done) {
-      promiseRequire('asset/require-multiple-times', {
+      promiseRequire('asset/require-multiple-times.js', {
         fulfilledWith: 'requireMultipletimes'
       })
       .then(function (requireMultipletimes) {
         expect(requireMultipletimes).toBe(1)
-        return promiseRequire('asset/require-multiple-times', {
+        return promiseRequire('asset/require-multiple-times.js', {
           fulfilledWith: 'requireMultipletimes'
         })
       })
@@ -84,7 +84,7 @@ describe('promise-require module: ', function () {
     it('support set custom container of script element', function (done) {
       var optionsContainer = document.getElementById('container')
       // URL is relative container's document
-      promiseRequire('in-container', {
+      promiseRequire('in-container.js', {
         container: optionsContainer.contentDocument.head
       })
       .then(function () {

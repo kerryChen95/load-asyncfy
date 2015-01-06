@@ -49,10 +49,7 @@ module.exports = function promiseRequire (url, options) {
   // Ref:
   // http://stackoverflow.com/questions/470832/getting-an-absolute-url-from-a-relative-one-ie6-issue/
   if (hasOwnProperty.call(passedUrls, url)) {
-    // Resolve the promise after return it
-    setTimeout(function () {
-      deferred.resolve(getGlobalVars(options.fulfilledWith))
-    }, 1)
+    deferred.resolve(getGlobalVars(options.fulfilledWith))
     return deferred.promise
   }
   else {

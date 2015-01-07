@@ -19,6 +19,7 @@
 ### Critical
 
 * [x] Must have extension name `.js` for JS files
+* [ ] Rename `options.fulfilledWith` to `options.fulfillWith`
 * [ ] Promise to load multiple JavaScript files
 * [ ] Test browsers
   * [ ] IE8+
@@ -28,8 +29,10 @@
 
 ### Major
 
+* [x] `options.fulfilledWith` support provided as function
 * [ ] Support `options.charset`
 * [ ] Support `options.crossorigin`
+* [ ] Test poll CSS file
 
 ### Minor
 
@@ -41,9 +44,8 @@
 
 ### Blocker
 
-* [ ] Check and save absolute URL
+* [ ] Use absolute URL and container's document to determine whether to load
 * [ ] Support `options.timeout=15000ms`
-* [ ] Test poll CSS file
 
 ### Critical
 

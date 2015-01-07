@@ -49,7 +49,7 @@ module.exports = function promiseRequire (url, options) {
   // Ref:
   // http://stackoverflow.com/questions/470832/getting-an-absolute-url-from-a-relative-one-ie6-issue/
   if (hasOwnProperty.call(passedUrls, url)) {
-    deferred.resolve(getGlobalVars(options.fulfilledWith))
+    deferred.resolve(getFulfillValue(options.fulfilledWith))
     return deferred.promise
   }
   else {
@@ -123,7 +123,7 @@ function addOnload (node, isCss, deferred, options) {
     node.onload = node.onerror = node.onreadystatechange = null
 
     node = null
-    deferred.resolve(getGlobalVars(options.fulfilledWith))
+    deferred.resolve(getFulfillValue(options.fulfilledWith))
   }
   function onerror (errorEvent) {
     deferred.reject(errorEvent)
@@ -158,7 +158,7 @@ function pollCss (node, deferred, options) {
   }
 
   if (isLoaded) {
-    deferred.resolve(getGlobalVars(options.fulfilledWith))
+    deferred.resolve(getFulfillValue(options.fulfilledWith))
   }
   else {
     deferred.reject()
@@ -186,21 +186,27 @@ function delayResolve (deferred) {
   }
 }
 
-function getGlobalVars (name) {
-  if (!name) {
+function getFulfillValue (demand) {
+  var globalVars, i, l
+
+  if (typeof demand === 'function') {
+    return demand()
+  }
+  else if (typeof demand === 'string') {
+    return win[demand]
+  }
+  else if (({}).toString.call(demand) === '[object Array]') {
+    globalVars = []
+    for (i = 0, l = demand.length; i < l; ++i) {
+      globalVars.push(win[demand[i]])
+    }
+    return globalVars
+  }
+  else if (!demand) {
     return
   }
-  else if (typeof name === 'string') {
-    return win[name]
+  else {
+    throw new Error('Invalid options `fulfilledWith`')
+    return
   }
-
-  var globalVars = []
-  var names = name
-  name = null
-  var l = names.length
-  var i
-  for (i = 0; i < l; ++i) {
-    globalVars.push(win[names[i]])
-  }
-  return globalVars
 }

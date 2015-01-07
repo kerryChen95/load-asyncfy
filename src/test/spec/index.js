@@ -51,6 +51,19 @@ describe('promise-require module: ', function () {
       })
     })
 
+    it('fulfill with the return of specified function', function (done) {
+      promiseRequire('asset/fulfilled-with-function-result.js', {
+        fulfilledWith: function () {
+          return window.fulfillWithFunctionResult;
+        }
+      })
+      .then(function (fulfillWithFunctionResult) {
+        console.log('The promise to load fulfilled-with-function-result.js was resolved');
+        expect(fulfillWithFunctionResult).toBe(true)
+        done()
+      })
+    })
+
     it('reject with an error event object if not exist', function (done) {
       promiseRequire('asset/nonexistent.js')
       .then(function () {
